@@ -1,21 +1,21 @@
 // Copyright (c) 2014-2018, The Monero Project
-// 
+//
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without modification, are
 // permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice, this list of
 //    conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice, this list
 //    of conditions and the following disclaimer in the documentation and/or other
 //    materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors may be
 //    used to endorse or promote products derived from this software without specific
 //    prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
 // EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
@@ -35,9 +35,9 @@ namespace tools
 {
 
 // RFC defines for record types and classes for DNS, gleaned from ldns source
-const static int DNS_CLASS_IN  = 1;
-const static int DNS_TYPE_A    = 1;
-const static int DNS_TYPE_TXT  = 16;
+const static int DNS_CLASS_IN = 1;
+const static int DNS_TYPE_A = 1;
+const static int DNS_TYPE_TXT = 16;
 const static int DNS_TYPE_AAAA = 8;
 
 struct DNSResolverData;
@@ -51,23 +51,21 @@ struct DNSResolverData;
  */
 class DNSResolver
 {
-private:
-
-  /**
+  private:
+	/**
    * @brief Constructs an instance of DNSResolver
    *
    * Constructs a class instance and does setup stuff for the backend resolver.
    */
-  DNSResolver();
+	DNSResolver();
 
-public:
-
-  /**
+  public:
+	/**
    * @brief takes care of freeing C pointers and such
    */
-  ~DNSResolver();
+	~DNSResolver();
 
-  /**
+	/**
    * @brief gets ipv4 addresses from DNS query of a URL
    *
    * returns a vector of all IPv4 "A" records for given URL.
@@ -79,9 +77,9 @@ public:
    *
    * @return vector of strings containing ipv4 addresses
    */
-  std::vector<std::string> get_ipv4(const std::string& url, bool& dnssec_available, bool& dnssec_valid);
+	std::vector<std::string> get_ipv4(const std::string& url, bool& dnssec_available, bool& dnssec_valid);
 
-  /**
+	/**
    * @brief gets ipv6 addresses from DNS query
    *
    * returns a vector of all IPv6 "A" records for given URL.
@@ -91,9 +89,9 @@ public:
    *
    * @return vector of strings containing ipv6 addresses
    */
-   std::vector<std::string> get_ipv6(const std::string& url, bool& dnssec_available, bool& dnssec_valid);
+	std::vector<std::string> get_ipv6(const std::string& url, bool& dnssec_available, bool& dnssec_valid);
 
-  /**
+	/**
    * @brief gets all TXT records from a DNS query for the supplied URL;
    * if no TXT record present returns an empty vector.
    *
@@ -101,10 +99,10 @@ public:
    *
    * @return A vector of strings containing a TXT record; or an empty vector
    */
-  // TODO: modify this to accommodate DNSSEC
-   std::vector<std::string> get_txt_record(const std::string& url, bool& dnssec_available, bool& dnssec_valid);
+	// TODO: modify this to accommodate DNSSEC
+	std::vector<std::string> get_txt_record(const std::string& url, bool& dnssec_available, bool& dnssec_valid);
 
-  /**
+	/**
    * @brief Gets a DNS address from OpenAlias format
    *
    * If the address looks good, but contains one @ symbol, replace that with a .
@@ -114,25 +112,24 @@ public:
    *
    * @return dns_addr  DNS address
    */
-  std::string get_dns_format_from_oa_address(const std::string& oa_addr);
+	std::string get_dns_format_from_oa_address(const std::string& oa_addr);
 
-  /**
+	/**
    * @brief Gets the singleton instance of DNSResolver
    *
    * @return returns a pointer to the singleton
    */
-  static DNSResolver& instance();
+	static DNSResolver& instance();
 
-  /**
+	/**
    * @brief Gets a new instance of DNSResolver
    *
    * @return returns a pointer to the new object
    */
-  static DNSResolver create();
+	static DNSResolver create();
 
-private:
-
-  /**
+  private:
+	/**
    * @brief gets all records of a given type from a DNS query for the supplied URL;
    * if no such record is present returns an empty vector.
    *
@@ -142,19 +139,19 @@ private:
    *
    * @return A vector of strings containing the requested record; or an empty vector
    */
-  // TODO: modify this to accommodate DNSSEC
-  std::vector<std::string> get_record(const std::string& url, int record_type, std::string (*reader)(const char *,size_t), bool& dnssec_available, bool& dnssec_valid);
+	// TODO: modify this to accommodate DNSSEC
+	std::vector<std::string> get_record(const std::string& url, int record_type, std::string (*reader)(const char*, size_t), bool& dnssec_available, bool& dnssec_valid);
 
-  /**
+	/**
    * @brief Checks a string to see if it looks like a URL
    *
    * @param addr the string to be checked
    *
    * @return true if it looks enough like a URL, false if not
    */
-  bool check_address_syntax(const char *addr) const;
+	bool check_address_syntax(const char* addr) const;
 
-  DNSResolverData *m_data;
+	DNSResolverData* m_data;
 }; // class DNSResolver
 
 namespace dns_utils
@@ -165,10 +162,10 @@ std::vector<std::string> addresses_from_url(const std::string& url, bool& dnssec
 
 std::string get_account_address_as_str_from_url(const std::string& url, bool& dnssec_valid, std::function<std::string(const std::string&, const std::vector<std::string>&, bool)> confirm_dns);
 
-bool load_txt_records_from_dns(std::vector<std::string> &records, const std::vector<std::string> &dns_urls);
+bool load_txt_records_from_dns(std::vector<std::string>& records, const std::vector<std::string>& dns_urls);
 
-std::vector<std::string> parse_dns_public(const char *s);
+std::vector<std::string> parse_dns_public(const char* s);
 
-}  // namespace tools::dns_utils
+} // namespace dns_utils
 
-}  // namespace tools
+} // namespace tools
