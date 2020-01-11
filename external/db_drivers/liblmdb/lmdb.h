@@ -169,21 +169,22 @@
 #include <inttypes.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /** Unix permissions for creating files, or dummy definition for Windows */
 #ifdef _MSC_VER
-typedef	int	mdb_mode_t;
+	typedef int mdb_mode_t;
 #else
-typedef	mode_t	mdb_mode_t;
+typedef mode_t mdb_mode_t;
 #endif
 
 #ifdef MDB_VL32
-typedef uint64_t	mdb_size_t;
-#define mdb_env_create	mdb_env_create_vl32	/**< Prevent mixing with non-VL32 builds */
+	typedef uint64_t mdb_size_t;
+#define mdb_env_create mdb_env_create_vl32 /**< Prevent mixing with non-VL32 builds */
 #else
-typedef size_t	mdb_size_t;
+typedef size_t mdb_size_t;
 #endif
 
 /** An abstraction for a file handle.
@@ -191,7 +192,7 @@ typedef size_t	mdb_size_t;
  *	they're opaque pointers.
  */
 #ifdef _WIN32
-typedef	void *mdb_filehandle_t;
+	typedef void* mdb_filehandle_t;
 #else
 typedef int mdb_filehandle_t;
 #endif
@@ -204,54 +205,54 @@ typedef int mdb_filehandle_t;
  *	@{
  */
 /** Library major version */
-#define MDB_VERSION_MAJOR	0
+#define MDB_VERSION_MAJOR 0
 /** Library minor version */
-#define MDB_VERSION_MINOR	9
+#define MDB_VERSION_MINOR 9
 /** Library patch version */
-#define MDB_VERSION_PATCH	70
+#define MDB_VERSION_PATCH 70
 
 /** Combine args a,b,c into a single integer for easy version comparisons */
-#define MDB_VERINT(a,b,c)	(((a) << 24) | ((b) << 16) | (c))
+#define MDB_VERINT(a, b, c) (((a) << 24) | ((b) << 16) | (c))
 
 /** The full library version as a single integer */
-#define MDB_VERSION_FULL	\
-	MDB_VERINT(MDB_VERSION_MAJOR,MDB_VERSION_MINOR,MDB_VERSION_PATCH)
+#define MDB_VERSION_FULL \
+	MDB_VERINT(MDB_VERSION_MAJOR, MDB_VERSION_MINOR, MDB_VERSION_PATCH)
 
 /** The release date of this library version */
-#define MDB_VERSION_DATE	"December 19, 2015"
+#define MDB_VERSION_DATE "December 19, 2015"
 
 /** A stringifier for the version info */
-#define MDB_VERSTR(a,b,c,d)	"LMDB " #a "." #b "." #c ": (" d ")"
+#define MDB_VERSTR(a, b, c, d) "LMDB " #a "." #b "." #c ": (" d ")"
 
 /** A helper for the stringifier macro */
-#define MDB_VERFOO(a,b,c,d)	MDB_VERSTR(a,b,c,d)
+#define MDB_VERFOO(a, b, c, d) MDB_VERSTR(a, b, c, d)
 
 /** The full library version as a C string */
-#define	MDB_VERSION_STRING	\
-	MDB_VERFOO(MDB_VERSION_MAJOR,MDB_VERSION_MINOR,MDB_VERSION_PATCH,MDB_VERSION_DATE)
-/**	@} */
+#define MDB_VERSION_STRING \
+	MDB_VERFOO(MDB_VERSION_MAJOR, MDB_VERSION_MINOR, MDB_VERSION_PATCH, MDB_VERSION_DATE)
+	/**	@} */
 
-/** @brief Opaque structure for a database environment.
+	/** @brief Opaque structure for a database environment.
  *
  * A DB environment supports multiple databases, all residing in the same
  * shared-memory map.
  */
-typedef struct MDB_env MDB_env;
+	typedef struct MDB_env MDB_env;
 
-/** @brief Opaque structure for a transaction handle.
+	/** @brief Opaque structure for a transaction handle.
  *
  * All database operations require a transaction handle. Transactions may be
  * read-only or read-write.
  */
-typedef struct MDB_txn MDB_txn;
+	typedef struct MDB_txn MDB_txn;
 
-/** @brief A handle for an individual database in the DB environment. */
-typedef unsigned int	MDB_dbi;
+	/** @brief A handle for an individual database in the DB environment. */
+	typedef unsigned int MDB_dbi;
 
-/** @brief Opaque structure for navigating through a database */
-typedef struct MDB_cursor MDB_cursor;
+	/** @brief Opaque structure for navigating through a database */
+	typedef struct MDB_cursor MDB_cursor;
 
-/** @brief Generic structure used for passing keys and data in and out
+	/** @brief Generic structure used for passing keys and data in and out
  * of the database.
  *
  * Values returned from the database are valid only until a subsequent
@@ -262,15 +263,16 @@ typedef struct MDB_cursor MDB_cursor;
  * The same applies to data sizes in databases with the #MDB_DUPSORT flag.
  * Other data items can in theory be from 0 to 0xffffffff bytes long.
  */
-typedef struct MDB_val {
-	size_t		 mv_size;	/**< size of the data item */
-	void		*mv_data;	/**< address of the data item */
-} MDB_val;
+	typedef struct MDB_val
+	{
+		size_t mv_size; /**< size of the data item */
+		void* mv_data;  /**< address of the data item */
+	} MDB_val;
 
-/** @brief A callback function used to compare two keys in a database */
-typedef int  (MDB_cmp_func)(const MDB_val *a, const MDB_val *b);
+	/** @brief A callback function used to compare two keys in a database */
+	typedef int(MDB_cmp_func)(const MDB_val* a, const MDB_val* b);
 
-/** @brief A callback function used to relocate a position-dependent data item
+	/** @brief A callback function used to relocate a position-dependent data item
  * in a fixed-address database.
  *
  * The \b newptr gives the item's desired address in
@@ -284,79 +286,79 @@ typedef int  (MDB_cmp_func)(const MDB_val *a, const MDB_val *b);
  * @param[in] relctx An application-provided context, set by #mdb_set_relctx().
  * @todo This feature is currently unimplemented.
  */
-typedef void (MDB_rel_func)(MDB_val *item, void *oldptr, void *newptr, void *relctx);
+	typedef void(MDB_rel_func)(MDB_val* item, void* oldptr, void* newptr, void* relctx);
 
-/** @defgroup	mdb_env	Environment Flags
+	/** @defgroup	mdb_env	Environment Flags
  *	@{
  */
 	/** mmap at a fixed address (experimental) */
-#define MDB_FIXEDMAP	0x01
+#define MDB_FIXEDMAP 0x01
 	/** no environment directory */
-#define MDB_NOSUBDIR	0x4000
+#define MDB_NOSUBDIR 0x4000
 	/** don't fsync after commit */
-#define MDB_NOSYNC		0x10000
+#define MDB_NOSYNC 0x10000
 	/** read only */
-#define MDB_RDONLY		0x20000
+#define MDB_RDONLY 0x20000
 	/** don't fsync metapage after commit */
-#define MDB_NOMETASYNC		0x40000
+#define MDB_NOMETASYNC 0x40000
 	/** use writable mmap */
-#define MDB_WRITEMAP		0x80000
+#define MDB_WRITEMAP 0x80000
 	/** use asynchronous msync when #MDB_WRITEMAP is used */
-#define MDB_MAPASYNC		0x100000
+#define MDB_MAPASYNC 0x100000
 	/** tie reader locktable slots to #MDB_txn objects instead of to threads */
-#define MDB_NOTLS		0x200000
+#define MDB_NOTLS 0x200000
 	/** don't do any locking, caller must manage their own locks */
-#define MDB_NOLOCK		0x400000
+#define MDB_NOLOCK 0x400000
 	/** don't do readahead (no effect on Windows) */
-#define MDB_NORDAHEAD	0x800000
+#define MDB_NORDAHEAD 0x800000
 	/** don't initialize malloc'd memory before writing to datafile */
-#define MDB_NOMEMINIT	0x1000000
+#define MDB_NOMEMINIT 0x1000000
 	/** use the previous snapshot rather than the latest one */
-#define MDB_PREVSNAPSHOT	0x2000000
-/** @} */
+#define MDB_PREVSNAPSHOT 0x2000000
+	/** @} */
 
-/**	@defgroup	mdb_dbi_open	Database Flags
+	/**	@defgroup	mdb_dbi_open	Database Flags
  *	@{
  */
 	/** use reverse string keys */
-#define MDB_REVERSEKEY	0x02
+#define MDB_REVERSEKEY 0x02
 	/** use sorted duplicates */
-#define MDB_DUPSORT		0x04
+#define MDB_DUPSORT 0x04
 	/** numeric keys in native byte order: either unsigned int or size_t.
 	 *  The keys must all be of the same size. */
-#define MDB_INTEGERKEY	0x08
+#define MDB_INTEGERKEY 0x08
 	/** with #MDB_DUPSORT, sorted dup items have fixed size */
-#define MDB_DUPFIXED	0x10
+#define MDB_DUPFIXED 0x10
 	/** with #MDB_DUPSORT, dups are #MDB_INTEGERKEY-style integers */
-#define MDB_INTEGERDUP	0x20
+#define MDB_INTEGERDUP 0x20
 	/** with #MDB_DUPSORT, use reverse string dups */
-#define MDB_REVERSEDUP	0x40
+#define MDB_REVERSEDUP 0x40
 	/** create DB if not already existing */
-#define MDB_CREATE		0x40000
+#define MDB_CREATE 0x40000
 /** @} */
 
 /**	@defgroup mdb_put	Write Flags
  *	@{
  */
 /** For put: Don't write if the key already exists. */
-#define MDB_NOOVERWRITE	0x10
+#define MDB_NOOVERWRITE 0x10
 /** Only for #MDB_DUPSORT<br>
  * For put: don't write if the key and data pair already exist.<br>
  * For mdb_cursor_del: remove all duplicate data items.
  */
-#define MDB_NODUPDATA	0x20
+#define MDB_NODUPDATA 0x20
 /** For mdb_cursor_put: overwrite the current key/data pair */
-#define MDB_CURRENT	0x40
+#define MDB_CURRENT 0x40
 /** For put: Just reserve space for data, don't copy it. Return a
  * pointer to the reserved space.
  */
-#define MDB_RESERVE	0x10000
+#define MDB_RESERVE 0x10000
 /** Data is being appended, don't split full pages. */
-#define MDB_APPEND	0x20000
+#define MDB_APPEND 0x20000
 /** Duplicate data is being appended, don't split full pages. */
-#define MDB_APPENDDUP	0x40000
+#define MDB_APPENDDUP 0x40000
 /** Store multiple data items in one call. Only for #MDB_DUPFIXED. */
-#define MDB_MULTIPLE	0x80000
+#define MDB_MULTIPLE 0x80000
 /*	@} */
 
 /**	@defgroup mdb_copy	Copy Flags
@@ -365,82 +367,83 @@ typedef void (MDB_rel_func)(MDB_val *item, void *oldptr, void *newptr, void *rel
 /** Compacting copy: Omit free space from copy, and renumber all
  * pages sequentially.
  */
-#define MDB_CP_COMPACT	0x01
-/*	@} */
+#define MDB_CP_COMPACT 0x01
+	/*	@} */
 
-/** @brief Cursor Get operations.
+	/** @brief Cursor Get operations.
  *
  *	This is the set of all operations for retrieving data
  *	using a cursor.
  */
-typedef enum MDB_cursor_op {
-	MDB_FIRST,				/**< Position at first key/data item */
-	MDB_FIRST_DUP,			/**< Position at first data item of current key.
+	typedef enum MDB_cursor_op
+	{
+		MDB_FIRST,			/**< Position at first key/data item */
+		MDB_FIRST_DUP,		/**< Position at first data item of current key.
 								Only for #MDB_DUPSORT */
-	MDB_GET_BOTH,			/**< Position at key/data pair. Only for #MDB_DUPSORT */
-	MDB_GET_BOTH_RANGE,		/**< position at key, nearest data. Only for #MDB_DUPSORT */
-	MDB_GET_CURRENT,		/**< Return key/data at current cursor position */
-	MDB_GET_MULTIPLE,		/**< Return key and up to a page of duplicate data items
+		MDB_GET_BOTH,		/**< Position at key/data pair. Only for #MDB_DUPSORT */
+		MDB_GET_BOTH_RANGE, /**< position at key, nearest data. Only for #MDB_DUPSORT */
+		MDB_GET_CURRENT,	/**< Return key/data at current cursor position */
+		MDB_GET_MULTIPLE,   /**< Return key and up to a page of duplicate data items
 								from current cursor position. Move cursor to prepare
 								for #MDB_NEXT_MULTIPLE. Only for #MDB_DUPFIXED */
-	MDB_LAST,				/**< Position at last key/data item */
-	MDB_LAST_DUP,			/**< Position at last data item of current key.
+		MDB_LAST,			/**< Position at last key/data item */
+		MDB_LAST_DUP,		/**< Position at last data item of current key.
 								Only for #MDB_DUPSORT */
-	MDB_NEXT,				/**< Position at next data item */
-	MDB_NEXT_DUP,			/**< Position at next data item of current key.
+		MDB_NEXT,			/**< Position at next data item */
+		MDB_NEXT_DUP,		/**< Position at next data item of current key.
 								Only for #MDB_DUPSORT */
-	MDB_NEXT_MULTIPLE,		/**< Return key and up to a page of duplicate data items
+		MDB_NEXT_MULTIPLE,  /**< Return key and up to a page of duplicate data items
 								from next cursor position. Move cursor to prepare
 								for #MDB_NEXT_MULTIPLE. Only for #MDB_DUPFIXED */
-	MDB_NEXT_NODUP,			/**< Position at first data item of next key */
-	MDB_PREV,				/**< Position at previous data item */
-	MDB_PREV_DUP,			/**< Position at previous data item of current key.
+		MDB_NEXT_NODUP,		/**< Position at first data item of next key */
+		MDB_PREV,			/**< Position at previous data item */
+		MDB_PREV_DUP,		/**< Position at previous data item of current key.
 								Only for #MDB_DUPSORT */
-	MDB_PREV_NODUP,			/**< Position at last data item of previous key */
-	MDB_SET,				/**< Position at specified key */
-	MDB_SET_KEY,			/**< Position at specified key, return key + data */
-	MDB_SET_RANGE,			/**< Position at first key greater than or equal to specified key. */
-	MDB_PREV_MULTIPLE		/**< Position at previous page and return key and up to
+		MDB_PREV_NODUP,		/**< Position at last data item of previous key */
+		MDB_SET,			/**< Position at specified key */
+		MDB_SET_KEY,		/**< Position at specified key, return key + data */
+		MDB_SET_RANGE,		/**< Position at first key greater than or equal to specified key. */
+		MDB_PREV_MULTIPLE   /**< Position at previous page and return key and up to
 								a page of duplicate data items. Only for #MDB_DUPFIXED */
-} MDB_cursor_op;
+	} MDB_cursor_op;
 
-/** @defgroup  errors	Return Codes
+	/** @defgroup  errors	Return Codes
  *
  *	BerkeleyDB uses -30800 to -30999, we'll go under them
  *	@{
  */
 	/**	Successful result */
-#define MDB_SUCCESS	 0
+#define MDB_SUCCESS 0
 	/** key/data pair already exists */
-#define MDB_KEYEXIST	(-30799)
+#define MDB_KEYEXIST (-30799)
 	/** key/data pair not found (EOF) */
-#define MDB_NOTFOUND	(-30798)
+#define MDB_NOTFOUND (-30798)
 	/** Requested page not found - this usually indicates corruption */
-#define MDB_PAGE_NOTFOUND	(-30797)
+#define MDB_PAGE_NOTFOUND (-30797)
 	/** Located page was wrong type */
-#define MDB_CORRUPTED	(-30796)
+#define MDB_CORRUPTED (-30796)
 	/** Update of meta page failed or environment had fatal error */
-#define MDB_PANIC		(-30795)
+#define MDB_PANIC (-30795)
 	/** Environment version mismatch */
-#define MDB_VERSION_MISMATCH	(-30794)
+#define MDB_VERSION_MISMATCH (-30794)
 	/** File is not a valid LMDB file */
-#define MDB_INVALID	(-30793)
+#define MDB_INVALID (-30793)
 	/** Environment mapsize reached */
-#define MDB_MAP_FULL	(-30792)
+#define MDB_MAP_FULL (-30792)
 	/** Environment maxdbs reached */
-#define MDB_DBS_FULL	(-30791)
+#define MDB_DBS_FULL (-30791)
 	/** Environment maxreaders reached */
-#define MDB_READERS_FULL	(-30790)
+#define MDB_READERS_FULL (-30790)
 	/** Too many TLS keys in use - Windows only */
-#define MDB_TLS_FULL	(-30789)
+#define MDB_TLS_FULL (-30789)
 	/** Txn has too many dirty pages */
-#define MDB_TXN_FULL	(-30788)
+#define MDB_TXN_FULL (-30788)
 	/** Cursor stack too deep - internal error */
-#define MDB_CURSOR_FULL	(-30787)
+#define MDB_CURSOR_FULL (-30787)
 	/** Page has not enough space - internal error */
-#define MDB_PAGE_FULL	(-30786)
+#define MDB_PAGE_FULL (-30786)
 	/** Database contents grew beyond environment mapsize */
-#define MDB_MAP_RESIZED	(-30785)
+#define MDB_MAP_RESIZED (-30785)
 	/** Operation and DB incompatible, or DB type changed. This can mean:
 	 *	<ul>
 	 *	<li>The operation expects an #MDB_DUPSORT / #MDB_DUPFIXED database.
@@ -449,39 +452,41 @@ typedef enum MDB_cursor_op {
 	 *	<li>The database was dropped and recreated with different flags.
 	 *	</ul>
 	 */
-#define MDB_INCOMPATIBLE	(-30784)
+#define MDB_INCOMPATIBLE (-30784)
 	/** Invalid reuse of reader locktable slot */
-#define MDB_BAD_RSLOT		(-30783)
+#define MDB_BAD_RSLOT (-30783)
 	/** Transaction must abort, has a child, or is invalid */
-#define MDB_BAD_TXN			(-30782)
+#define MDB_BAD_TXN (-30782)
 	/** Unsupported size of key/DB name/data, or wrong DUPFIXED size */
-#define MDB_BAD_VALSIZE		(-30781)
+#define MDB_BAD_VALSIZE (-30781)
 	/** The specified DBI was changed unexpectedly */
-#define MDB_BAD_DBI		(-30780)
+#define MDB_BAD_DBI (-30780)
 	/** The last defined error code */
-#define MDB_LAST_ERRCODE	MDB_BAD_DBI
-/** @} */
+#define MDB_LAST_ERRCODE MDB_BAD_DBI
+	/** @} */
 
-/** @brief Statistics for a database in the environment */
-typedef struct MDB_stat {
-	unsigned int	ms_psize;			/**< Size of a database page.
+	/** @brief Statistics for a database in the environment */
+	typedef struct MDB_stat
+	{
+		unsigned int ms_psize;		  /**< Size of a database page.
 											This is currently the same for all databases. */
-	unsigned int	ms_depth;			/**< Depth (height) of the B-tree */
-	mdb_size_t		ms_branch_pages;	/**< Number of internal (non-leaf) pages */
-	mdb_size_t		ms_leaf_pages;		/**< Number of leaf pages */
-	mdb_size_t		ms_overflow_pages;	/**< Number of overflow pages */
-	mdb_size_t		ms_entries;			/**< Number of data items */
-} MDB_stat;
+		unsigned int ms_depth;		  /**< Depth (height) of the B-tree */
+		mdb_size_t ms_branch_pages;   /**< Number of internal (non-leaf) pages */
+		mdb_size_t ms_leaf_pages;	 /**< Number of leaf pages */
+		mdb_size_t ms_overflow_pages; /**< Number of overflow pages */
+		mdb_size_t ms_entries;		  /**< Number of data items */
+	} MDB_stat;
 
-/** @brief Information about the environment */
-typedef struct MDB_envinfo {
-	void	*me_mapaddr;			/**< Address of map, if fixed */
-	mdb_size_t	me_mapsize;				/**< Size of the data memory map */
-	mdb_size_t	me_last_pgno;			/**< ID of the last used page */
-	mdb_size_t	me_last_txnid;			/**< ID of the last committed transaction */
-	unsigned int me_maxreaders;		/**< max reader slots in the environment */
-	unsigned int me_numreaders;		/**< max reader slots used in the environment */
-} MDB_envinfo;
+	/** @brief Information about the environment */
+	typedef struct MDB_envinfo
+	{
+		void* me_mapaddr;			/**< Address of map, if fixed */
+		mdb_size_t me_mapsize;		/**< Size of the data memory map */
+		mdb_size_t me_last_pgno;	/**< ID of the last used page */
+		mdb_size_t me_last_txnid;   /**< ID of the last committed transaction */
+		unsigned int me_maxreaders; /**< max reader slots in the environment */
+		unsigned int me_numreaders; /**< max reader slots used in the environment */
+	} MDB_envinfo;
 
 	/** @brief Return the LMDB library version information.
 	 *
@@ -490,7 +495,7 @@ typedef struct MDB_envinfo {
 	 * @param[out] patch if non-NULL, the library patch version number is copied here
 	 * @retval "version string" The library version as a string
 	 */
-char *mdb_version(int *major, int *minor, int *patch);
+	char* mdb_version(int* major, int* minor, int* patch);
 
 	/** @brief Return a string describing a given error code.
 	 *
@@ -502,7 +507,7 @@ char *mdb_version(int *major, int *minor, int *patch);
 	 * @param[in] err The error code
 	 * @retval "error message" The description of the error
 	 */
-char *mdb_strerror(int err);
+	char* mdb_strerror(int err);
 
 	/** @brief Create an LMDB environment handle.
 	 *
@@ -515,7 +520,7 @@ char *mdb_strerror(int err);
 	 * @param[out] env The address where the new handle will be stored
 	 * @return A non-zero error value on failure and 0 on success.
 	 */
-int  mdb_env_create(MDB_env **env);
+	int mdb_env_create(MDB_env** env);
 
 	/** @brief Open an environment handle.
 	 *
@@ -644,7 +649,7 @@ int  mdb_env_create(MDB_env **env);
 	 *	<li>EAGAIN - the environment was locked by another process.
 	 * </ul>
 	 */
-int  mdb_env_open(MDB_env *env, const char *path, unsigned int flags, mdb_mode_t mode);
+	int mdb_env_open(MDB_env* env, const char* path, unsigned int flags, mdb_mode_t mode);
 
 	/** @brief Copy an LMDB environment to the specified path.
 	 *
@@ -660,7 +665,7 @@ int  mdb_env_open(MDB_env *env, const char *path, unsigned int flags, mdb_mode_t
 	 * empty.
 	 * @return A non-zero error value on failure and 0 on success.
 	 */
-int  mdb_env_copy(MDB_env *env, const char *path);
+	int mdb_env_copy(MDB_env* env, const char* path);
 
 	/** @brief Copy an LMDB environment to the specified file descriptor.
 	 *
@@ -675,7 +680,7 @@ int  mdb_env_copy(MDB_env *env, const char *path);
 	 * have already been opened for Write access.
 	 * @return A non-zero error value on failure and 0 on success.
 	 */
-int  mdb_env_copyfd(MDB_env *env, mdb_filehandle_t fd);
+	int mdb_env_copyfd(MDB_env* env, mdb_filehandle_t fd);
 
 	/** @brief Copy an LMDB environment to the specified path, with options.
 	 *
@@ -699,7 +704,7 @@ int  mdb_env_copyfd(MDB_env *env, mdb_filehandle_t fd);
 	 * </ul>
 	 * @return A non-zero error value on failure and 0 on success.
 	 */
-int  mdb_env_copy2(MDB_env *env, const char *path, unsigned int flags);
+	int mdb_env_copy2(MDB_env* env, const char* path, unsigned int flags);
 
 	/** @brief Copy an LMDB environment to the specified file descriptor,
 	 *	with options.
@@ -718,7 +723,7 @@ int  mdb_env_copy2(MDB_env *env, const char *path, unsigned int flags);
 	 * See #mdb_env_copy2() for options.
 	 * @return A non-zero error value on failure and 0 on success.
 	 */
-int  mdb_env_copyfd2(MDB_env *env, mdb_filehandle_t fd, unsigned int flags);
+	int mdb_env_copyfd2(MDB_env* env, mdb_filehandle_t fd, unsigned int flags);
 
 	/** @brief Return statistics about the LMDB environment.
 	 *
@@ -726,7 +731,7 @@ int  mdb_env_copyfd2(MDB_env *env, mdb_filehandle_t fd, unsigned int flags);
 	 * @param[out] stat The address of an #MDB_stat structure
 	 * 	where the statistics will be copied
 	 */
-int  mdb_env_stat(MDB_env *env, MDB_stat *stat);
+	int mdb_env_stat(MDB_env* env, MDB_stat* stat);
 
 	/** @brief Return information about the LMDB environment.
 	 *
@@ -734,7 +739,7 @@ int  mdb_env_stat(MDB_env *env, MDB_stat *stat);
 	 * @param[out] stat The address of an #MDB_envinfo structure
 	 * 	where the information will be copied
 	 */
-int  mdb_env_info(MDB_env *env, MDB_envinfo *stat);
+	int mdb_env_info(MDB_env* env, MDB_envinfo* stat);
 
 	/** @brief Flush the data buffers to disk.
 	 *
@@ -755,7 +760,7 @@ int  mdb_env_info(MDB_env *env, MDB_envinfo *stat);
 	 *	<li>EIO - an error occurred during synchronization.
 	 * </ul>
 	 */
-int  mdb_env_sync(MDB_env *env, int force);
+	int mdb_env_sync(MDB_env* env, int force);
 
 	/** @brief Close the environment and release the memory map.
 	 *
@@ -765,7 +770,7 @@ int  mdb_env_sync(MDB_env *env, int force);
 	 * The environment handle will be freed and must not be used again after this call.
 	 * @param[in] env An environment handle returned by #mdb_env_create()
 	 */
-void mdb_env_close(MDB_env *env);
+	void mdb_env_close(MDB_env* env);
 
 	/** @brief Set environment flags.
 	 *
@@ -781,7 +786,7 @@ void mdb_env_close(MDB_env *env);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_env_set_flags(MDB_env *env, unsigned int flags, int onoff);
+	int mdb_env_set_flags(MDB_env* env, unsigned int flags, int onoff);
 
 	/** @brief Get environment flags.
 	 *
@@ -793,7 +798,7 @@ int  mdb_env_set_flags(MDB_env *env, unsigned int flags, int onoff);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_env_get_flags(MDB_env *env, unsigned int *flags);
+	int mdb_env_get_flags(MDB_env* env, unsigned int* flags);
 
 	/** @brief Return the path that was used in #mdb_env_open().
 	 *
@@ -807,7 +812,7 @@ int  mdb_env_get_flags(MDB_env *env, unsigned int *flags);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_env_get_path(MDB_env *env, const char **path);
+	int mdb_env_get_path(MDB_env* env, const char** path);
 
 	/** @brief Return the filedescriptor for the given environment.
 	 *
@@ -819,7 +824,7 @@ int  mdb_env_get_path(MDB_env *env, const char **path);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_env_get_fd(MDB_env *env, mdb_filehandle_t *fd);
+	int mdb_env_get_fd(MDB_env* env, mdb_filehandle_t* fd);
 
 	/** @brief Set the size of the memory map to use for this environment.
 	 *
@@ -853,7 +858,7 @@ int  mdb_env_get_fd(MDB_env *env, mdb_filehandle_t *fd);
 	 *   	an active write transaction.
 	 * </ul>
 	 */
-int  mdb_env_set_mapsize(MDB_env *env, mdb_size_t size);
+	int mdb_env_set_mapsize(MDB_env* env, mdb_size_t size);
 
 	/** @brief Set the maximum number of threads/reader slots for the environment.
 	 *
@@ -872,7 +877,7 @@ int  mdb_env_set_mapsize(MDB_env *env, mdb_size_t size);
 	 *	<li>EINVAL - an invalid parameter was specified, or the environment is already open.
 	 * </ul>
 	 */
-int  mdb_env_set_maxreaders(MDB_env *env, unsigned int readers);
+	int mdb_env_set_maxreaders(MDB_env* env, unsigned int readers);
 
 	/** @brief Get the maximum number of threads/reader slots for the environment.
 	 *
@@ -884,7 +889,7 @@ int  mdb_env_set_maxreaders(MDB_env *env, unsigned int readers);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_env_get_maxreaders(MDB_env *env, unsigned int *readers);
+	int mdb_env_get_maxreaders(MDB_env* env, unsigned int* readers);
 
 	/** @brief Set the maximum number of named databases for the environment.
 	 *
@@ -904,7 +909,7 @@ int  mdb_env_get_maxreaders(MDB_env *env, unsigned int *readers);
 	 *	<li>EINVAL - an invalid parameter was specified, or the environment is already open.
 	 * </ul>
 	 */
-int  mdb_env_set_maxdbs(MDB_env *env, MDB_dbi dbs);
+	int mdb_env_set_maxdbs(MDB_env* env, MDB_dbi dbs);
 
 	/** @brief Get the maximum size of keys and #MDB_DUPSORT data we can write.
 	 *
@@ -913,7 +918,7 @@ int  mdb_env_set_maxdbs(MDB_env *env, MDB_dbi dbs);
 	 * @param[in] env An environment handle returned by #mdb_env_create()
 	 * @return The maximum size of a key we can write
 	 */
-int  mdb_env_get_maxkeysize(MDB_env *env);
+	int mdb_env_get_maxkeysize(MDB_env* env);
 
 	/** @brief Set application information associated with the #MDB_env.
 	 *
@@ -921,14 +926,14 @@ int  mdb_env_get_maxkeysize(MDB_env *env);
 	 * @param[in] ctx An arbitrary pointer for whatever the application needs.
 	 * @return A non-zero error value on failure and 0 on success.
 	 */
-int  mdb_env_set_userctx(MDB_env *env, void *ctx);
+	int mdb_env_set_userctx(MDB_env* env, void* ctx);
 
 	/** @brief Get the application information associated with the #MDB_env.
 	 *
 	 * @param[in] env An environment handle returned by #mdb_env_create()
 	 * @return The pointer set by #mdb_env_set_userctx().
 	 */
-void *mdb_env_get_userctx(MDB_env *env);
+	void* mdb_env_get_userctx(MDB_env* env);
 
 	/** @brief A callback function for most LMDB assert() failures,
 	 * called before printing the message and aborting.
@@ -936,7 +941,7 @@ void *mdb_env_get_userctx(MDB_env *env);
 	 * @param[in] env An environment handle returned by #mdb_env_create().
 	 * @param[in] msg The assertion message, not including newline.
 	 */
-typedef void MDB_assert_func(MDB_env *env, const char *msg);
+	typedef void MDB_assert_func(MDB_env* env, const char* msg);
 
 	/** Set or reset the assert() callback of the environment.
 	 * Disabled if liblmdb is buillt with NDEBUG.
@@ -945,7 +950,7 @@ typedef void MDB_assert_func(MDB_env *env, const char *msg);
 	 * @param[in] func An #MDB_assert_func function, or 0.
 	 * @return A non-zero error value on failure and 0 on success.
 	 */
-int  mdb_env_set_assert(MDB_env *env, MDB_assert_func *func);
+	int mdb_env_set_assert(MDB_env* env, MDB_assert_func* func);
 
 	/** @brief Create a transaction for use with the environment.
 	 *
@@ -985,13 +990,13 @@ int  mdb_env_set_assert(MDB_env *env, MDB_assert_func *func);
 	 *	<li>ENOMEM - out of memory.
 	 * </ul>
 	 */
-int  mdb_txn_begin(MDB_env *env, MDB_txn *parent, unsigned int flags, MDB_txn **txn);
+	int mdb_txn_begin(MDB_env* env, MDB_txn* parent, unsigned int flags, MDB_txn** txn);
 
 	/** @brief Returns the transaction's #MDB_env
 	 *
 	 * @param[in] txn A transaction handle returned by #mdb_txn_begin()
 	 */
-MDB_env *mdb_txn_env(MDB_txn *txn);
+	MDB_env* mdb_txn_env(MDB_txn* txn);
 
 	/** @brief Return the transaction's ID.
 	 *
@@ -1002,7 +1007,7 @@ MDB_env *mdb_txn_env(MDB_txn *txn);
 	 * @param[in] txn A transaction handle returned by #mdb_txn_begin()
 	 * @return A transaction ID, valid if input is an active transaction.
 	 */
-mdb_size_t mdb_txn_id(MDB_txn *txn);
+	mdb_size_t mdb_txn_id(MDB_txn* txn);
 
 	/** @brief Commit all the operations of a transaction into the database.
 	 *
@@ -1020,7 +1025,7 @@ mdb_size_t mdb_txn_id(MDB_txn *txn);
 	 *	<li>ENOMEM - out of memory.
 	 * </ul>
 	 */
-int  mdb_txn_commit(MDB_txn *txn);
+	int mdb_txn_commit(MDB_txn* txn);
 
 	/** @brief Abandon all the operations of the transaction instead of saving them.
 	 *
@@ -1030,7 +1035,7 @@ int  mdb_txn_commit(MDB_txn *txn);
 	 * Only write-transactions free cursors.
 	 * @param[in] txn A transaction handle returned by #mdb_txn_begin()
 	 */
-void mdb_txn_abort(MDB_txn *txn);
+	void mdb_txn_abort(MDB_txn* txn);
 
 	/** @brief Reset a read-only transaction.
 	 *
@@ -1049,7 +1054,7 @@ void mdb_txn_abort(MDB_txn *txn);
 	 * the database size may grow much more rapidly than otherwise.
 	 * @param[in] txn A transaction handle returned by #mdb_txn_begin()
 	 */
-void mdb_txn_reset(MDB_txn *txn);
+	void mdb_txn_reset(MDB_txn* txn);
 
 	/** @brief Renew a read-only transaction.
 	 *
@@ -1065,12 +1070,12 @@ void mdb_txn_reset(MDB_txn *txn);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_txn_renew(MDB_txn *txn);
+	int mdb_txn_renew(MDB_txn* txn);
 
 /** Compat with version <= 0.9.4, avoid clash with libmdb from MDB Tools project */
-#define mdb_open(txn,name,flags,dbi)	mdb_dbi_open(txn,name,flags,dbi)
+#define mdb_open(txn, name, flags, dbi) mdb_dbi_open(txn, name, flags, dbi)
 /** Compat with version <= 0.9.4, avoid clash with libmdb from MDB Tools project */
-#define mdb_close(env,dbi)				mdb_dbi_close(env,dbi)
+#define mdb_close(env, dbi) mdb_dbi_close(env, dbi)
 
 	/** @brief Open a database in the environment.
 	 *
@@ -1139,7 +1144,7 @@ int  mdb_txn_renew(MDB_txn *txn);
 	 *	<li>#MDB_DBS_FULL - too many databases have been opened. See #mdb_env_set_maxdbs().
 	 * </ul>
 	 */
-int  mdb_dbi_open(MDB_txn *txn, const char *name, unsigned int flags, MDB_dbi *dbi);
+	int mdb_dbi_open(MDB_txn* txn, const char* name, unsigned int flags, MDB_dbi* dbi);
 
 	/** @brief Retrieve statistics for a database.
 	 *
@@ -1153,7 +1158,7 @@ int  mdb_dbi_open(MDB_txn *txn, const char *name, unsigned int flags, MDB_dbi *d
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_stat(MDB_txn *txn, MDB_dbi dbi, MDB_stat *stat);
+	int mdb_stat(MDB_txn* txn, MDB_dbi dbi, MDB_stat* stat);
 
 	/** @brief Retrieve the DB flags for a database handle.
 	 *
@@ -1162,7 +1167,7 @@ int  mdb_stat(MDB_txn *txn, MDB_dbi dbi, MDB_stat *stat);
 	 * @param[out] flags Address where the flags will be returned.
 	 * @return A non-zero error value on failure and 0 on success.
 	 */
-int mdb_dbi_flags(MDB_txn *txn, MDB_dbi dbi, unsigned int *flags);
+	int mdb_dbi_flags(MDB_txn* txn, MDB_dbi dbi, unsigned int* flags);
 
 	/** @brief Close a database handle. Normally unnecessary. Use with care:
 	 *
@@ -1180,7 +1185,7 @@ int mdb_dbi_flags(MDB_txn *txn, MDB_dbi dbi, unsigned int *flags);
 	 * @param[in] env An environment handle returned by #mdb_env_create()
 	 * @param[in] dbi A database handle returned by #mdb_dbi_open()
 	 */
-void mdb_dbi_close(MDB_env *env, MDB_dbi dbi);
+	void mdb_dbi_close(MDB_env* env, MDB_dbi dbi);
 
 	/** @brief Empty or delete+close a database.
 	 *
@@ -1191,7 +1196,7 @@ void mdb_dbi_close(MDB_env *env, MDB_dbi dbi);
 	 * environment and close the DB handle.
 	 * @return A non-zero error value on failure and 0 on success.
 	 */
-int  mdb_drop(MDB_txn *txn, MDB_dbi dbi, int del);
+	int mdb_drop(MDB_txn* txn, MDB_dbi dbi, int del);
 
 	/** @brief Set a custom key comparison function for a database.
 	 *
@@ -1212,7 +1217,7 @@ int  mdb_drop(MDB_txn *txn, MDB_dbi dbi, int del);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_set_compare(MDB_txn *txn, MDB_dbi dbi, MDB_cmp_func *cmp);
+	int mdb_set_compare(MDB_txn* txn, MDB_dbi dbi, MDB_cmp_func* cmp);
 
 	/** @brief Set a custom data comparison function for a #MDB_DUPSORT database.
 	 *
@@ -1235,7 +1240,7 @@ int  mdb_set_compare(MDB_txn *txn, MDB_dbi dbi, MDB_cmp_func *cmp);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_set_dupsort(MDB_txn *txn, MDB_dbi dbi, MDB_cmp_func *cmp);
+	int mdb_set_dupsort(MDB_txn* txn, MDB_dbi dbi, MDB_cmp_func* cmp);
 
 	/** @brief Set a relocation function for a #MDB_FIXEDMAP database.
 	 *
@@ -1255,7 +1260,7 @@ int  mdb_set_dupsort(MDB_txn *txn, MDB_dbi dbi, MDB_cmp_func *cmp);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_set_relfunc(MDB_txn *txn, MDB_dbi dbi, MDB_rel_func *rel);
+	int mdb_set_relfunc(MDB_txn* txn, MDB_dbi dbi, MDB_rel_func* rel);
 
 	/** @brief Set a context pointer for a #MDB_FIXEDMAP database's relocation function.
 	 *
@@ -1271,7 +1276,7 @@ int  mdb_set_relfunc(MDB_txn *txn, MDB_dbi dbi, MDB_rel_func *rel);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_set_relctx(MDB_txn *txn, MDB_dbi dbi, void *ctx);
+	int mdb_set_relctx(MDB_txn* txn, MDB_dbi dbi, void* ctx);
 
 	/** @brief Get items from a database.
 	 *
@@ -1299,7 +1304,7 @@ int  mdb_set_relctx(MDB_txn *txn, MDB_dbi dbi, void *ctx);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_get(MDB_txn *txn, MDB_dbi dbi, MDB_val *key, MDB_val *data);
+	int mdb_get(MDB_txn* txn, MDB_dbi dbi, MDB_val* key, MDB_val* data);
 
 	/** @brief Store items into a database.
 	 *
@@ -1348,8 +1353,8 @@ int  mdb_get(MDB_txn *txn, MDB_dbi dbi, MDB_val *key, MDB_val *data);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_put(MDB_txn *txn, MDB_dbi dbi, MDB_val *key, MDB_val *data,
-			    unsigned int flags);
+	int mdb_put(MDB_txn* txn, MDB_dbi dbi, MDB_val* key, MDB_val* data,
+		unsigned int flags);
 
 	/** @brief Delete items from a database.
 	 *
@@ -1373,7 +1378,7 @@ int  mdb_put(MDB_txn *txn, MDB_dbi dbi, MDB_val *key, MDB_val *data,
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_del(MDB_txn *txn, MDB_dbi dbi, MDB_val *key, MDB_val *data);
+	int mdb_del(MDB_txn* txn, MDB_dbi dbi, MDB_val* key, MDB_val* data);
 
 	/** @brief Create a cursor handle.
 	 *
@@ -1397,7 +1402,7 @@ int  mdb_del(MDB_txn *txn, MDB_dbi dbi, MDB_val *key, MDB_val *data);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_cursor_open(MDB_txn *txn, MDB_dbi dbi, MDB_cursor **cursor);
+	int mdb_cursor_open(MDB_txn* txn, MDB_dbi dbi, MDB_cursor** cursor);
 
 	/** @brief Close a cursor handle.
 	 *
@@ -1405,7 +1410,7 @@ int  mdb_cursor_open(MDB_txn *txn, MDB_dbi dbi, MDB_cursor **cursor);
 	 * Its transaction must still be live if it is a write-transaction.
 	 * @param[in] cursor A cursor handle returned by #mdb_cursor_open()
 	 */
-void mdb_cursor_close(MDB_cursor *cursor);
+	void mdb_cursor_close(MDB_cursor* cursor);
 
 	/** @brief Renew a cursor handle.
 	 *
@@ -1423,19 +1428,19 @@ void mdb_cursor_close(MDB_cursor *cursor);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_cursor_renew(MDB_txn *txn, MDB_cursor *cursor);
+	int mdb_cursor_renew(MDB_txn* txn, MDB_cursor* cursor);
 
 	/** @brief Return the cursor's transaction handle.
 	 *
 	 * @param[in] cursor A cursor handle returned by #mdb_cursor_open()
 	 */
-MDB_txn *mdb_cursor_txn(MDB_cursor *cursor);
+	MDB_txn* mdb_cursor_txn(MDB_cursor* cursor);
 
 	/** @brief Return the cursor's database handle.
 	 *
 	 * @param[in] cursor A cursor handle returned by #mdb_cursor_open()
 	 */
-MDB_dbi mdb_cursor_dbi(MDB_cursor *cursor);
+	MDB_dbi mdb_cursor_dbi(MDB_cursor* cursor);
 
 	/** @brief Retrieve by cursor.
 	 *
@@ -1456,8 +1461,8 @@ MDB_dbi mdb_cursor_dbi(MDB_cursor *cursor);
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_cursor_get(MDB_cursor *cursor, MDB_val *key, MDB_val *data,
-			    MDB_cursor_op op);
+	int mdb_cursor_get(MDB_cursor* cursor, MDB_val* key, MDB_val* data,
+		MDB_cursor_op op);
 
 	/** @brief Store by cursor.
 	 *
@@ -1518,8 +1523,8 @@ int  mdb_cursor_get(MDB_cursor *cursor, MDB_val *key, MDB_val *data,
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_cursor_put(MDB_cursor *cursor, MDB_val *key, MDB_val *data,
-				unsigned int flags);
+	int mdb_cursor_put(MDB_cursor* cursor, MDB_val* key, MDB_val* data,
+		unsigned int flags);
 
 	/** @brief Delete current key/data pair
 	 *
@@ -1538,7 +1543,7 @@ int  mdb_cursor_put(MDB_cursor *cursor, MDB_val *key, MDB_val *data,
 	 *	<li>EINVAL - an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_cursor_del(MDB_cursor *cursor, unsigned int flags);
+	int mdb_cursor_del(MDB_cursor* cursor, unsigned int flags);
 
 	/** @brief Return count of duplicates for current key.
 	 *
@@ -1552,7 +1557,7 @@ int  mdb_cursor_del(MDB_cursor *cursor, unsigned int flags);
 	 *	<li>EINVAL - cursor is not initialized, or an invalid parameter was specified.
 	 * </ul>
 	 */
-int  mdb_cursor_count(MDB_cursor *cursor, mdb_size_t *countp);
+	int mdb_cursor_count(MDB_cursor* cursor, mdb_size_t* countp);
 
 	/** @brief Compare two data items according to a particular database.
 	 *
@@ -1564,7 +1569,7 @@ int  mdb_cursor_count(MDB_cursor *cursor, mdb_size_t *countp);
 	 * @param[in] b The second item to compare
 	 * @return < 0 if a < b, 0 if a == b, > 0 if a > b
 	 */
-int  mdb_cmp(MDB_txn *txn, MDB_dbi dbi, const MDB_val *a, const MDB_val *b);
+	int mdb_cmp(MDB_txn* txn, MDB_dbi dbi, const MDB_val* a, const MDB_val* b);
 
 	/** @brief Compare two data items according to a particular database.
 	 *
@@ -1576,7 +1581,7 @@ int  mdb_cmp(MDB_txn *txn, MDB_dbi dbi, const MDB_val *a, const MDB_val *b);
 	 * @param[in] b The second item to compare
 	 * @return < 0 if a < b, 0 if a == b, > 0 if a > b
 	 */
-int  mdb_dcmp(MDB_txn *txn, MDB_dbi dbi, const MDB_val *a, const MDB_val *b);
+	int mdb_dcmp(MDB_txn* txn, MDB_dbi dbi, const MDB_val* a, const MDB_val* b);
 
 	/** @brief A callback function used to print a message from the library.
 	 *
@@ -1584,7 +1589,7 @@ int  mdb_dcmp(MDB_txn *txn, MDB_dbi dbi, const MDB_val *a, const MDB_val *b);
 	 * @param[in] ctx An arbitrary context pointer for the callback.
 	 * @return < 0 on failure, >= 0 on success.
 	 */
-typedef int (MDB_msg_func)(const char *msg, void *ctx);
+	typedef int(MDB_msg_func)(const char* msg, void* ctx);
 
 	/** @brief Dump the entries in the reader lock table.
 	 *
@@ -1593,7 +1598,7 @@ typedef int (MDB_msg_func)(const char *msg, void *ctx);
 	 * @param[in] ctx Anything the message function needs
 	 * @return < 0 on failure, >= 0 on success.
 	 */
-int	mdb_reader_list(MDB_env *env, MDB_msg_func *func, void *ctx);
+	int mdb_reader_list(MDB_env* env, MDB_msg_func* func, void* ctx);
 
 	/** @brief Check for stale entries in the reader lock table.
 	 *
@@ -1601,8 +1606,8 @@ int	mdb_reader_list(MDB_env *env, MDB_msg_func *func, void *ctx);
 	 * @param[out] dead Number of stale slots that were cleared
 	 * @return 0 on success, non-zero on failure.
 	 */
-int	mdb_reader_check(MDB_env *env, int *dead);
-/**	@} */
+	int mdb_reader_check(MDB_env* env, int* dead);
+	/**	@} */
 
 #ifdef __cplusplus
 }
