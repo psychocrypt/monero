@@ -49,42 +49,37 @@
 
 #include "blockchain_utilities.h"
 
-
 using namespace cryptonote;
-
 
 class BootstrapFile
 {
-public:
+  public:
+	uint64_t count_bytes(std::ifstream& import_file, uint64_t blocks, uint64_t& h, bool& quit);
+	uint64_t count_blocks(const std::string& dir_path, std::streampos& start_pos, uint64_t& seek_height);
+	uint64_t count_blocks(const std::string& dir_path);
+	uint64_t seek_to_first_chunk(std::ifstream& import_file);
 
-  uint64_t count_bytes(std::ifstream& import_file, uint64_t blocks, uint64_t& h, bool& quit);
-  uint64_t count_blocks(const std::string& dir_path, std::streampos& start_pos, uint64_t& seek_height);
-  uint64_t count_blocks(const std::string& dir_path);
-  uint64_t seek_to_first_chunk(std::ifstream& import_file);
+	bool store_blockchain_raw(cryptonote::Blockchain* cs, cryptonote::tx_memory_pool* txp,
+		boost::filesystem::path& output_file, uint64_t use_block_height = 0);
 
-  bool store_blockchain_raw(cryptonote::Blockchain* cs, cryptonote::tx_memory_pool* txp,
-      boost::filesystem::path& output_file, uint64_t use_block_height=0);
+  protected:
+	Blockchain* m_blockchain_storage;
 
-protected:
+	tx_memory_pool* m_tx_pool;
+	typedef std::vector<char> buffer_type;
+	std::ofstream* m_raw_data_file;
+	buffer_type m_buffer;
+	boost::iostreams::stream<boost::iostreams::back_insert_device<buffer_type>>* m_output_stream;
 
-  Blockchain* m_blockchain_storage;
+	// open export file for write
+	bool open_writer(const boost::filesystem::path& file_path);
+	bool initialize_file();
+	bool close();
+	void write_block(block& block);
+	void flush_chunk();
 
-  tx_memory_pool* m_tx_pool;
-  typedef std::vector<char> buffer_type;
-  std::ofstream * m_raw_data_file;
-  buffer_type m_buffer;
-  boost::iostreams::stream<boost::iostreams::back_insert_device<buffer_type>>* m_output_stream;
-
-  // open export file for write
-  bool open_writer(const boost::filesystem::path& file_path);
-  bool initialize_file();
-  bool close();
-  void write_block(block& block);
-  void flush_chunk();
-
-private:
-
-  uint64_t m_height;
-  uint64_t m_cur_height; // tracks current height during export
-  uint32_t m_max_chunk;
+  private:
+	uint64_t m_height;
+	uint64_t m_cur_height; // tracks current height during export
+	uint32_t m_max_chunk;
 };
