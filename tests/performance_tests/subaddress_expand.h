@@ -56,7 +56,7 @@ class test_wallet2_expand_subaddresses : public single_tx_test_base
 
 	bool test()
 	{
-		wallet.expand_subaddresses({0, 0});
+		wallet.expand_subaddresses({1, 0});
 		return true;
 	}
 
