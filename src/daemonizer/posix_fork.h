@@ -31,9 +31,10 @@
 
 #ifndef WIN32
 
-namespace posix {
+namespace posix
+{
 
-void fork(const std::string & pidfile);
+void fork(const std::string& pidfile);
 
 }
 

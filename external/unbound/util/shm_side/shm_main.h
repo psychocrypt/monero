@@ -46,17 +46,20 @@ struct worker;
 
 /** Some global statistics that are not in struct stats_info,
  * this struct is shared on a shm segment */
-struct shm_stat_info {
+struct shm_stat_info
+{
 
 	int num_threads;
 
-	struct {
+	struct
+	{
 		struct timeval now;
 		struct timeval up;
 		struct timeval elapsed;
 	} time;
 
-	struct {
+	struct
+	{
 		size_t msg;
 		size_t rrset;
 		size_t val;
@@ -68,7 +71,8 @@ struct shm_stat_info {
 /**
  * The SHM info.
  */
-struct shm_main_info {
+struct shm_main_info
+{
 	/** stats_info array, shared memory segment.
 	 * [0] is totals, [1..thread_num] are per-thread stats */
 	struct stats_info* ptr_arr;
@@ -81,6 +85,6 @@ struct shm_main_info {
 
 int shm_main_init(struct daemon* daemon);
 void shm_main_shutdown(struct daemon* daemon);
-void shm_main_run(struct worker *worker);
+void shm_main_run(struct worker* worker);
 
 #endif /* UTIL_SHM_SIDE_MAIN_H */

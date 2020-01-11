@@ -46,7 +46,7 @@
 #include "util/alloc.h"
 #include "services/modstack.h"
 #ifdef UB_ON_WINDOWS
-#  include "util/winsock_event.h"
+#include "util/winsock_event.h"
 #endif
 struct config_file;
 struct worker;
@@ -76,7 +76,8 @@ struct dnsc_env;
  * Structure holding worker list.
  * Holds globally visible information.
  */
-struct daemon {
+struct daemon
+{
 	/** The config settings */
 	struct config_file* cfg;
 	/** the chroot dir in use, NULL if none */
@@ -99,7 +100,7 @@ struct daemon {
 	/** remote control connections management (for first worker) */
 	struct daemon_remote* rc;
 	/** ssl context for listening to dnstcp over ssl, and connecting ssl */
-	void* listen_sslctx, *connect_sslctx;
+	void *listen_sslctx, *connect_sslctx;
 	/** num threads allocated */
 	int num;
 	/** the worker entries */

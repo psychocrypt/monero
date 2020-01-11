@@ -143,7 +143,8 @@ struct sldns_buffer;
 /**
  * A replay scenario.
  */
-struct replay_scenario {
+struct replay_scenario
+{
 	/** name of replay scenario. malloced string. */
 	char* title;
 
@@ -168,7 +169,8 @@ struct replay_scenario {
  * This is a recording of an event that happens.
  * And if output is presented, what is done with that.
  */
-struct replay_moment {
+struct replay_moment
+{
 	/** 
 	 * The replay time step number. Starts at 0, time is incremented 
 	 * every time the fake select() is run. 
@@ -178,7 +180,8 @@ struct replay_moment {
 	struct replay_moment* mom_next;
 
 	/** what happens this moment? */
-	enum replay_event_type {
+	enum replay_event_type
+	{
 		/** nothing happens, as if this event is not there. */
 		repevt_nothing,
 		/** incoming query */
@@ -204,8 +207,8 @@ struct replay_moment {
 		/** cause traffic to flow */
 		repevt_traffic
 	}
-		/** variable with what is to happen this moment */
-		evt_type;
+	/** variable with what is to happen this moment */
+	evt_type;
 
 	/** The sent packet must match this. Incoming events, the data. */
 	struct entry* match;
@@ -232,7 +235,8 @@ struct replay_moment {
 /**
  * Range of timesteps, and canned replies to matching queries.
  */
-struct replay_range {
+struct replay_range
+{
 	/** time range when this is valid. Including start and end step. */
 	int start_step;
 	/** end step of time range. */
@@ -252,7 +256,8 @@ struct replay_range {
 /**
  * Replay storage of runtime information.
  */
-struct replay_runtime {
+struct replay_runtime
+{
 	/**
 	 * The scenario
 	 */
@@ -272,7 +277,7 @@ struct replay_runtime {
 	 * List of answers to queries from clients. These need to be checked.
 	 */
 	struct replay_answer* answer_list;
-	
+
 	/** last element in answer list. */
 	struct replay_answer* answer_last;
 
@@ -282,7 +287,7 @@ struct replay_runtime {
 	/** callback to call for incoming queries */
 	comm_point_callback_type* callback_query;
 	/** user argument for incoming query callback */
-	void *cb_arg;
+	void* cb_arg;
 
 	/** ref the infra cache (was passed to outside_network_create) */
 	struct infra_cache* infra;
@@ -295,7 +300,7 @@ struct replay_runtime {
 	/** signal handler callback */
 	void (*sig_cb)(int, void*);
 	/** signal handler user arg */
-	void *sig_cb_arg;
+	void* sig_cb_arg;
 	/** time to exit cleanly */
 	int exit_cleanly;
 
@@ -311,7 +316,8 @@ struct replay_runtime {
 /**
  * Pending queries to network, fake replay version.
  */
-struct fake_pending {
+struct fake_pending
+{
 	/** what is important only that we remember the query, copied here. */
 	struct sldns_buffer* buffer;
 	/** and to what address this is sent to. */
@@ -347,7 +353,8 @@ struct fake_pending {
 /**
  * An answer that is pending to happen.
  */
-struct replay_answer {
+struct replay_answer
+{
 	/** Next in list */
 	struct replay_answer* next;
 	/** reply information */
@@ -360,7 +367,8 @@ struct replay_answer {
 /**
  * Timers with callbacks, fake replay version.
  */
-struct fake_timer {
+struct fake_timer
+{
 	/** next in list */
 	struct fake_timer* next;
 	/** the runtime structure this is part of */
@@ -378,7 +386,8 @@ struct fake_timer {
 /**
  * Replay macro variable.  And its value.
  */
-struct replay_var {
+struct replay_var
+{
 	/** rbtree node. Key is this structure. Sorted by name. */
 	rbnode_type node;
 	/** the variable name */
@@ -394,7 +403,7 @@ struct replay_var {
  * @param lineno: incremented for every line read.
  * @return: Scenario. NULL if no scenario read.
  */
-struct replay_scenario* replay_scenario_read(FILE* in, const char* name, 
+struct replay_scenario* replay_scenario_read(FILE* in, const char* name,
 	int* lineno);
 
 /**
@@ -428,7 +437,7 @@ void macro_store_delete(rbtree_type* store);
  * @param text: string to work on.
  * @return newly malloced string with result.
  */
-char* macro_process(rbtree_type* store, struct replay_runtime* runtime, 
+char* macro_process(rbtree_type* store, struct replay_runtime* runtime,
 	char* text);
 
 /**

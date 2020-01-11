@@ -61,7 +61,8 @@ struct sldns_buffer;
 #define STATS_OPCODE_NUM 16
 
 /** per worker statistics */
-struct server_stats {
+struct server_stats
+{
 	/** number of queries from clients received. */
 	size_t num_queries;
 	/** number of queries that have been dropped/ratelimited by ip. */
@@ -141,7 +142,7 @@ struct server_stats {
 	 * if all histograms are same size (is so by default) then
 	 * adding up works well. */
 	size_t hist[NUM_BUCKETS_HIST];
-	
+
 	/** number of message cache entries */
 	size_t msg_cache_count;
 	/** number of rrset cache entries */
@@ -151,14 +152,14 @@ struct server_stats {
 	/** number of key cache entries */
 	size_t key_cache_count;
 #ifdef USE_DNSCRYPT
-    /** number of queries that used dnscrypt */
-    size_t num_query_dnscrypt_crypted;
-    /** number of queries that queried dnscrypt certificates */
-    size_t num_query_dnscrypt_cert;
-    /** number of queries in clear text and not asking for the certificates */
-    size_t num_query_dnscrypt_cleartext;
-    /** number of malformed encrypted queries */
-    size_t num_query_dnscrypt_crypted_malformed;
+	/** number of queries that used dnscrypt */
+	size_t num_query_dnscrypt_crypted;
+	/** number of queries that queried dnscrypt certificates */
+	size_t num_query_dnscrypt_cert;
+	/** number of queries in clear text and not asking for the certificates */
+	size_t num_query_dnscrypt_cleartext;
+	/** number of malformed encrypted queries */
+	size_t num_query_dnscrypt_crypted_malformed;
 #endif
 };
 
@@ -166,7 +167,8 @@ struct server_stats {
  * Statistics to send over the control pipe when asked
  * This struct is made to be memcpied, sent in binary.
  */
-struct stats_info {
+struct stats_info
+{
 	/** the thread stats */
 	struct server_stats svr;
 
@@ -221,7 +223,7 @@ void server_stats_obtain(struct worker* worker, struct worker* who,
  * @param reset: if true, depending on config stats are reset.
  * 	if false, statistics are not reset.
  */
-void server_stats_compile(struct worker* worker, struct stats_info* s, 
+void server_stats_compile(struct worker* worker, struct stats_info* s,
 	int reset);
 
 /**
@@ -249,7 +251,7 @@ void server_stats_add(struct stats_info* total, struct stats_info* a);
  * @param repinfo: reply info with remote address
  */
 void server_stats_insquery(struct server_stats* stats, struct comm_point* c,
-	uint16_t qtype, uint16_t qclass, struct edns_data* edns, 
+	uint16_t qtype, uint16_t qclass, struct edns_data* edns,
 	struct comm_reply* repinfo);
 
 /**

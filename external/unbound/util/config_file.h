@@ -56,7 +56,8 @@ struct regional;
  * The configuration options.
  * Strings are malloced.
  */
-struct config_file {
+struct config_file
+{
 	/** verbosity level as specified in the config file */
 	int verbosity;
 
@@ -154,13 +155,13 @@ struct config_file {
 	/** number of interfaces to open. If 0 default all interfaces. */
 	int num_ifs;
 	/** interface description strings (IP addresses) */
-	char **ifs;
+	char** ifs;
 
 	/** number of outgoing interfaces to open. 
 	 * If 0 default all interfaces. */
 	int num_out_ifs;
 	/** outgoing interface description strings (IP addresses) */
-	char **out_ifs;
+	char** out_ifs;
 
 	/** the root hints */
 	struct config_strlist* root_hints;
@@ -259,7 +260,7 @@ struct config_file {
 
 	/** the module configuration string */
 	char* module_conf;
-	
+
 	/** files with trusted DS and DNSKEYs in zonefile format, list */
 	struct config_strlist* trust_anchor_file_list;
 	/** list of trustanchor keys, linked list */
@@ -282,7 +283,7 @@ struct config_file {
 	/** the maximum for signature clock skew */
 	int32_t val_sig_skew_max;
 	/** this value sets the number of seconds before revalidating bogus */
-	int bogus_ttl; 
+	int bogus_ttl;
 	/** should validator clean additional section for secure msgs */
 	int val_clean_additional;
 	/** log bogus messages by the validator */
@@ -470,7 +471,8 @@ extern int autr_permit_small_holddown;
 /**
  * Stub config options
  */
-struct config_stub {
+struct config_stub
+{
 	/** next in list */
 	struct config_stub* next;
 	/** domain name (in text) of the stub apex domain */
@@ -490,7 +492,8 @@ struct config_stub {
 /**
  * View config options
  */
-struct config_view {
+struct config_view
+{
 	/** next in list */
 	struct config_view* next;
 	/** view name */
@@ -502,7 +505,7 @@ struct config_view {
 	/** local zones nodefault list */
 	struct config_strlist* local_zones_nodefault;
 	/** Fallback to global local_zones when there is no match in the view
-	 * view specific tree. 1 for yes, 0 for no */	
+	 * view specific tree. 1 for yes, 0 for no */
 	int isfirst;
 	/** predefined actions for particular IP address responses */
 	struct config_str2list* respip_actions;
@@ -513,7 +516,8 @@ struct config_view {
 /**
  * List of strings for config options
  */
-struct config_strlist {
+struct config_strlist
+{
 	/** next item in list */
 	struct config_strlist* next;
 	/** config option string */
@@ -523,7 +527,8 @@ struct config_strlist {
 /**
  * List of two strings for config options
  */
-struct config_str2list {
+struct config_str2list
+{
 	/** next item in list */
 	struct config_str2list* next;
 	/** first string */
@@ -535,7 +540,8 @@ struct config_str2list {
 /**
  * List of three strings for config options
  */
-struct config_str3list {
+struct config_str3list
+{
 	/** next item in list */
 	struct config_str3list* next;
 	/** first string */
@@ -546,11 +552,11 @@ struct config_str3list {
 	char* str3;
 };
 
-
 /**
  * List of string, bytestring for config options
  */
-struct config_strbytelist {
+struct config_strbytelist
+{
 	/** next item in list */
 	struct config_strbytelist* next;
 	/** first string */
@@ -561,7 +567,8 @@ struct config_strbytelist {
 };
 
 /** List head for strlist processing, used for append operation. */
-struct config_strlist_head {
+struct config_strlist_head
+{
 	/** first in list of text items */
 	struct config_strlist* first;
 	/** last in list of text items */
@@ -629,8 +636,8 @@ int config_set_option(struct config_file* config, const char* option,
  * @param arg: user argument for print func.
  * @return false if the option name is not supported (syntax error).
  */
-int config_get_option(struct config_file* cfg, const char* opt, 
-	void (*func)(char*,void*), void* arg);
+int config_get_option(struct config_file* cfg, const char* opt,
+	void (*func)(char*, void*), void* arg);
 
 /**
  * Get an option and return strlist
@@ -649,7 +656,7 @@ int config_get_option_list(struct config_file* cfg, const char* opt,
  * @param str: string. malloced, caller must free it.
  * @return 0=OK, 1=syntax error, 2=malloc failed.
  */
-int config_get_option_collate(struct config_file* cfg, const char* opt, 
+int config_get_option_collate(struct config_file* cfg, const char* opt,
 	char** str);
 
 /**
@@ -902,7 +909,7 @@ int cfg_scan_ports(int* avail, int num);
  * @return pointer to malloced buffer which is: [chroot][chdir]fname
  *      or NULL on malloc failure.
  */
-char* fname_after_chroot(const char* fname, struct config_file* cfg, 
+char* fname_after_chroot(const char* fname, struct config_file* cfg,
 	int use_chdir);
 
 /**
@@ -928,14 +935,14 @@ void errinf(struct module_qstate* qstate, const char* str);
  *	If NULL: nothing is added.
  *	if 0len element: 'from cache' is added.
  */
-void errinf_origin(struct module_qstate* qstate, struct sock_list *origin);
+void errinf_origin(struct module_qstate* qstate, struct sock_list* origin);
 
 /**
  * Append text to error info:  for RRset name type class
  * @param qstate: query state.
  * @param rr: rrset_key.
  */
-void errinf_rrset(struct module_qstate* qstate, struct ub_packed_rrset_key *rr);
+void errinf_rrset(struct module_qstate* qstate, struct ub_packed_rrset_key* rr);
 
 /**
  * Append text to error info:  str dname
@@ -943,7 +950,7 @@ void errinf_rrset(struct module_qstate* qstate, struct ub_packed_rrset_key *rr);
  * @param str: explanation string
  * @param dname: the dname.
  */
-void errinf_dname(struct module_qstate* qstate, const char* str, 
+void errinf_dname(struct module_qstate* qstate, const char* str,
 	uint8_t* dname);
 
 /**
@@ -957,7 +964,8 @@ char* errinf_to_str(struct module_qstate* qstate);
 /**
  * Used during options parsing
  */
-struct config_parser_state {
+struct config_parser_state
+{
 	/** name of file being parser */
 	char* filename;
 	/** line number in the file, starts at 1 */

@@ -9,9 +9,9 @@
  */
 
 #if 0 /* ENABLE_DNSCRYPT */
-# ifndef USE_DNSCRYPT
-#  define USE_DNSCRYPT 1
-# endif
+#ifndef USE_DNSCRYPT
+#define USE_DNSCRYPT 1
+#endif
 #endif
 
 #endif /* UNBOUND_DNSCRYPT_CONFIG_H */

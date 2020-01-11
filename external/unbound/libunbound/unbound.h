@@ -98,7 +98,8 @@
 #define _UB_UNBOUND_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /** the version of this header file */
@@ -106,73 +107,74 @@ extern "C" {
 #define UNBOUND_VERSION_MINOR 6
 #define UNBOUND_VERSION_MICRO 3
 
-/**
+	/**
  * The validation context is created to hold the resolver status,
  * validation keys and a small cache (containing messages, rrsets,
  * roundtrip times, trusted keys, lameness information).
  *
  * Its contents are internally defined.
  */
-struct ub_ctx;
+	struct ub_ctx;
 
-/**
+	/**
  * The validation and resolution results.
  * Allocated by the resolver, and need to be freed by the application
  * with ub_resolve_free().
  */
-struct ub_result {
-	/** The original question, name text string. */
-	char* qname;
-	/** the type asked for */
-	int qtype;
-	/** the class asked for */
-	int qclass;
+	struct ub_result
+	{
+		/** The original question, name text string. */
+		char* qname;
+		/** the type asked for */
+		int qtype;
+		/** the class asked for */
+		int qclass;
 
-	/** 
+		/** 
 	 * a list of network order DNS rdata items, terminated with a 
 	 * NULL pointer, so that data[0] is the first result entry,
 	 * data[1] the second, and the last entry is NULL. 
 	 * If there was no data, data[0] is NULL.
 	 */
-	char** data;
+		char** data;
 
-	/** the length in bytes of the data items, len[i] for data[i] */
-	int* len;
+		/** the length in bytes of the data items, len[i] for data[i] */
+		int* len;
 
-	/** 
+		/** 
 	 * canonical name for the result (the final cname). 
 	 * zero terminated string.
 	 * May be NULL if no canonical name exists.
 	 */
-	char* canonname;
+		char* canonname;
 
-	/**
+		/**
 	 * DNS RCODE for the result. May contain additional error code if
 	 * there was no data due to an error. 0 (NOERROR) if okay.
 	 */
-	int rcode;
+		int rcode;
 
-	/**
+		/**
 	 * The DNS answer packet. Network formatted. Can contain DNSSEC types.
 	 */
-	void* answer_packet;
-	/** length of the answer packet in octets. */
-	int answer_len;
+		void* answer_packet;
+		/** length of the answer packet in octets. */
+		int answer_len;
 
-	/**
+		/**
 	 * If there is any data, this is true.
 	 * If false, there was no data (nxdomain may be true, rcode can be set).
 	 */
-	int havedata;
+		int havedata;
 
-	/** 
+		/** 
 	 * If there was no data, and the domain did not exist, this is true.
 	 * If it is false, and there was no data, then the domain name 
 	 * is purported to exist, but the requested data type is not available.
 	 */
-	int nxdomain;
+		int nxdomain;
 
-	/**
+		/**
 	 * True, if the result is validated securely.
 	 * False, if validation failed or domain queried has no security info.
 	 *
@@ -180,9 +182,9 @@ struct ub_result {
 	 * and secure is true. This means that the non-existance of the data
 	 * was cryptographically proven (with signatures).
 	 */
-	int secure;
+		int secure;
 
-	/** 
+		/** 
 	 * If the result was not secure (secure==0), and this result is due 
 	 * to a security failure, bogus is true.
 	 * This means the data has been actively tampered with, signatures
@@ -193,24 +195,24 @@ struct ub_result {
 	 * because security is disabled for that domain name. 
 	 * This means the data is from a domain where data is not signed.
 	 */
-	int bogus;
-	
-	/**
+		int bogus;
+
+		/**
 	 * If the result is bogus this contains a string (zero terminated)
 	 * that describes the failure.  There may be other errors as well
 	 * as the one described, the description may not be perfectly accurate.
 	 * Is NULL if the result is not bogus.
 	 */
-	char* why_bogus;
+		char* why_bogus;
 
-	/**
+		/**
 	 * TTL for the result, in seconds.  If the security is bogus, then
 	 * you also cannot trust this value.
 	 */
-	int ttl;
-};
+		int ttl;
+	};
 
-/**
+	/**
  * Callback for results of async queries.
  * The readable function definition looks like:
  * void my_callback(void* my_arg, int err, struct ub_result* result);
@@ -223,25 +225,25 @@ struct ub_result {
  *		This structure is allocated on the heap and needs to be
  *		freed with ub_resolve_free(result);
  */
-typedef void (*ub_callback_type)(void*, int, struct ub_result*);
+	typedef void (*ub_callback_type)(void*, int, struct ub_result*);
 
-/**
+	/**
  * Create a resolving and validation context.
  * The information from /etc/resolv.conf and /etc/hosts is not utilised by
  * default. Use ub_ctx_resolvconf and ub_ctx_hosts to read them.
  * @return a new context. default initialisation.
  * 	returns NULL on error.
  */
-struct ub_ctx* ub_ctx_create(void);
+	struct ub_ctx* ub_ctx_create(void);
 
-/**
+	/**
  * Destroy a validation context and free all its resources.
  * Outstanding async queries are killed and callbacks are not called for them.
  * @param ctx: context to delete.
  */
-void ub_ctx_delete(struct ub_ctx* ctx);
+	void ub_ctx_delete(struct ub_ctx* ctx);
 
-/**
+	/**
  * Set an option for the context.
  * @param ctx: context.
  * @param opt: option name from the unbound.conf config file format.
@@ -254,9 +256,9 @@ void ub_ctx_delete(struct ub_ctx* ctx);
  * @param val: value of the option.
  * @return: 0 if OK, else error.
  */
-int ub_ctx_set_option(struct ub_ctx* ctx, const char* opt, const char* val);
+	int ub_ctx_set_option(struct ub_ctx* ctx, const char* opt, const char* val);
 
-/**
+	/**
  * Get an option from the context.
  * @param ctx: context.
  * @param opt: option name from the unbound.conf config file format.
@@ -270,9 +272,9 @@ int ub_ctx_set_option(struct ub_ctx* ctx, const char* opt, const char* val);
  * 	returned in the string.
  * @return 0 if OK else an error code (malloc failure, syntax error).
  */
-int ub_ctx_get_option(struct ub_ctx* ctx, const char* opt, char** str);
+	int ub_ctx_get_option(struct ub_ctx* ctx, const char* opt, char** str);
 
-/**
+	/**
  * setup configuration for the given context.
  * @param ctx: context.
  * @param fname: unbound config file (not all settings applicable).
@@ -282,9 +284,9 @@ int ub_ctx_get_option(struct ub_ctx* ctx, const char* opt, char** str);
  * 	routines exist.
  * @return: 0 if OK, else error.
  */
-int ub_ctx_config(struct ub_ctx* ctx, const char* fname);
+	int ub_ctx_config(struct ub_ctx* ctx, const char* fname);
 
-/**
+	/**
  * Set machine to forward DNS queries to, the caching resolver to use. 
  * IP4 or IP6 address. Forwards all DNS requests to that machine, which 
  * is expected to run a recursive resolver. If the proxy is not 
@@ -301,9 +303,9 @@ int ub_ctx_config(struct ub_ctx* ctx, const char* fname);
  * 	If the addr is NULL, forwarding is disabled.
  * @return 0 if OK, else error.
  */
-int ub_ctx_set_fwd(struct ub_ctx* ctx, const char* addr);
+	int ub_ctx_set_fwd(struct ub_ctx* ctx, const char* addr);
 
-/**
+	/**
  * Add a stub zone, with given address to send to.  This is for custom
  * root hints or pointing to a local authoritative dns server.
  * For dns resolvers and the 'DHCP DNS' ip address, use ub_ctx_set_fwd.
@@ -321,10 +323,10 @@ int ub_ctx_set_fwd(struct ub_ctx* ctx, const char* addr);
  * 	For root hints it should be set to true.
  * @return 0 if OK, else error.
  */
-int ub_ctx_set_stub(struct ub_ctx* ctx, const char* zone, const char* addr,
-	int isprime);
+	int ub_ctx_set_stub(struct ub_ctx* ctx, const char* zone, const char* addr,
+		int isprime);
 
-/**
+	/**
  * Read list of nameservers to use from the filename given.
  * Usually "/etc/resolv.conf". Uses those nameservers as caching proxies.
  * If they do not support DNSSEC, validation may fail.
@@ -338,9 +340,9 @@ int ub_ctx_set_stub(struct ub_ctx* ctx, const char* zone, const char* addr,
  * @param fname: file name string. If NULL "/etc/resolv.conf" is used.
  * @return 0 if OK, else error.
  */
-int ub_ctx_resolvconf(struct ub_ctx* ctx, const char* fname);
+	int ub_ctx_resolvconf(struct ub_ctx* ctx, const char* fname);
 
-/**
+	/**
  * Read list of hosts from the filename given.
  * Usually "/etc/hosts". 
  * These addresses are not flagged as DNSSEC secure when queried for.
@@ -351,9 +353,9 @@ int ub_ctx_resolvconf(struct ub_ctx* ctx, const char* fname);
  * @param fname: file name string. If NULL "/etc/hosts" is used.
  * @return 0 if OK, else error.
  */
-int ub_ctx_hosts(struct ub_ctx* ctx, const char* fname);
+	int ub_ctx_hosts(struct ub_ctx* ctx, const char* fname);
 
-/**
+	/**
  * Add a trust anchor to the given context.
  * The trust anchor is a string, on one line, that holds a valid DNSKEY or
  * DS RR. 
@@ -364,9 +366,9 @@ int ub_ctx_hosts(struct ub_ctx* ctx, const char* fname);
  * 	[domainname] [TTL optional] [type] [class optional] [rdata contents]
  * @return 0 if OK, else error.
  */
-int ub_ctx_add_ta(struct ub_ctx* ctx, const char* ta);
+	int ub_ctx_add_ta(struct ub_ctx* ctx, const char* ta);
 
-/**
+	/**
  * Add trust anchors to the given context.
  * Pass name of a file with DS and DNSKEY records (like from dig or drill).
  * @param ctx: context.
@@ -375,9 +377,9 @@ int ub_ctx_add_ta(struct ub_ctx* ctx, const char* ta);
  * @param fname: filename of file with keyfile with trust anchors.
  * @return 0 if OK, else error.
  */
-int ub_ctx_add_ta_file(struct ub_ctx* ctx, const char* fname);
+	int ub_ctx_add_ta_file(struct ub_ctx* ctx, const char* fname);
 
-/**
+	/**
  * Add trust anchor to the given context that is tracked with RFC5011
  * automated trust anchor maintenance.  The file is written to when the
  * trust anchor is changed.
@@ -390,9 +392,9 @@ int ub_ctx_add_ta_file(struct ub_ctx* ctx, const char* fname);
  * @param fname: filename of file with trust anchor.
  * @return 0 if OK, else error.
  */
-int ub_ctx_add_ta_autr(struct ub_ctx* ctx, const char* fname);
+	int ub_ctx_add_ta_autr(struct ub_ctx* ctx, const char* fname);
 
-/**
+	/**
  * Add trust anchors to the given context.
  * Pass the name of a bind-style config file with trusted-keys{}.
  * @param ctx: context.
@@ -402,9 +404,9 @@ int ub_ctx_add_ta_autr(struct ub_ctx* ctx, const char* fname);
  * 	anchors.
  * @return 0 if OK, else error.
  */
-int ub_ctx_trustedkeys(struct ub_ctx* ctx, const char* fname);
+	int ub_ctx_trustedkeys(struct ub_ctx* ctx, const char* fname);
 
-/**
+	/**
  * Set debug output (and error output) to the specified stream.
  * Pass NULL to disable. Default is stderr.
  * @param ctx: context.
@@ -412,9 +414,9 @@ int ub_ctx_trustedkeys(struct ub_ctx* ctx, const char* fname);
  * 	Type void* to avoid stdio dependency of this header file.
  * @return 0 if OK, else error.
  */
-int ub_ctx_debugout(struct ub_ctx* ctx, void* out);
+	int ub_ctx_debugout(struct ub_ctx* ctx, void* out);
 
-/**
+	/**
  * Set debug verbosity for the context
  * Output is directed to stderr.
  * @param ctx: context.
@@ -422,9 +424,9 @@ int ub_ctx_debugout(struct ub_ctx* ctx, void* out);
  *	and 3 is lots.
  * @return 0 if OK, else error.
  */
-int ub_ctx_debuglevel(struct ub_ctx* ctx, int d);
+	int ub_ctx_debuglevel(struct ub_ctx* ctx, int d);
 
-/**
+	/**
  * Set a context behaviour for asynchronous action.
  * @param ctx: context.
  * @param dothread: if true, enables threading and a call to resolve_async() 
@@ -434,9 +436,9 @@ int ub_ctx_debuglevel(struct ub_ctx* ctx, int d);
  *	no effect (delete and re-create the context to change).
  * @return 0 if OK, else error.
  */
-int ub_ctx_async(struct ub_ctx* ctx, int dothread);
+	int ub_ctx_async(struct ub_ctx* ctx, int dothread);
 
-/**
+	/**
  * Poll a context to see if it has any new results
  * Do not poll in a loop, instead extract the fd below to poll for readiness,
  * and then check, or wait using the wait routine.
@@ -444,18 +446,18 @@ int ub_ctx_async(struct ub_ctx* ctx, int dothread);
  * @return: 0 if nothing to read, or nonzero if a result is available.
  * 	If nonzero, call ctx_process() to do callbacks.
  */
-int ub_poll(struct ub_ctx* ctx);
+	int ub_poll(struct ub_ctx* ctx);
 
-/**
+	/**
  * Wait for a context to finish with results. Calls ub_process() after
  * the wait for you. After the wait, there are no more outstanding 
  * asynchronous queries.
  * @param ctx: context.
  * @return: 0 if OK, else error.
  */
-int ub_wait(struct ub_ctx* ctx);
+	int ub_wait(struct ub_ctx* ctx);
 
-/**
+	/**
  * Get file descriptor. Wait for it to become readable, at this point
  * answers are returned from the asynchronous validating resolver.
  * Then call the ub_process to continue processing.
@@ -464,18 +466,18 @@ int ub_wait(struct ub_ctx* ctx);
  * @param ctx: context.
  * @return: -1 on error, or file descriptor to use select(2) with.
  */
-int ub_fd(struct ub_ctx* ctx);
+	int ub_fd(struct ub_ctx* ctx);
 
-/**
+	/**
  * Call this routine to continue processing results from the validating
  * resolver (when the fd becomes readable).
  * Will perform necessary callbacks.
  * @param ctx: context
  * @return: 0 if OK, else error.
  */
-int ub_process(struct ub_ctx* ctx);
+	int ub_process(struct ub_ctx* ctx);
 
-/**
+	/**
  * Perform resolution and validation of the target name.
  * @param ctx: context.
  *	The context is finalized, and can no longer accept config changes.
@@ -487,10 +489,10 @@ int ub_process(struct ub_ctx* ctx);
  * 	in that case (out of memory).
  * @return 0 if OK, else error.
  */
-int ub_resolve(struct ub_ctx* ctx, const char* name, int rrtype, 
-	int rrclass, struct ub_result** result);
+	int ub_resolve(struct ub_ctx* ctx, const char* name, int rrtype,
+		int rrclass, struct ub_result** result);
 
-/**
+	/**
  * Perform resolution and validation of the target name.
  * Asynchronous, after a while, the callback will be called with your
  * data and the result.
@@ -518,10 +520,10 @@ int ub_resolve(struct ub_ctx* ctx, const char* name, int rrtype,
  *	cancel the query.
  * @return 0 if OK, else error.
  */
-int ub_resolve_async(struct ub_ctx* ctx, const char* name, int rrtype, 
-	int rrclass, void* mydata, ub_callback_type callback, int* async_id);
+	int ub_resolve_async(struct ub_ctx* ctx, const char* name, int rrtype,
+		int rrclass, void* mydata, ub_callback_type callback, int* async_id);
 
-/**
+	/**
  * Cancel an async query in progress.
  * Its callback will not be called.
  *
@@ -534,29 +536,29 @@ int ub_resolve_async(struct ub_ctx* ctx, const char* name, int rrtype,
  * cancel fails with an error.  Also the cancel can fail due to a system
  * error, no memory or socket failures.
  */
-int ub_cancel(struct ub_ctx* ctx, int async_id);
+	int ub_cancel(struct ub_ctx* ctx, int async_id);
 
-/**
+	/**
  * Free storage associated with a result structure.
  * @param result: to free
  */
-void ub_resolve_free(struct ub_result* result);
+	void ub_resolve_free(struct ub_result* result);
 
-/** 
+	/** 
  * Convert error value to a human readable string.
  * @param err: error code from one of the libunbound functions.
  * @return pointer to constant text string, zero terminated.
  */
-const char* ub_strerror(int err);
+	const char* ub_strerror(int err);
 
-/**
+	/**
  * Debug routine.  Print the local zone information to debug output.
  * @param ctx: context.  Is finalized by the routine.
  * @return 0 if OK, else error.
  */
-int ub_ctx_print_local_zones(struct ub_ctx* ctx);
+	int ub_ctx_print_local_zones(struct ub_ctx* ctx);
 
-/**
+	/**
  * Add a new zone with the zonetype to the local authority info of the 
  * library.
  * @param ctx: context.  Is finalized by the routine.
@@ -565,19 +567,19 @@ int ub_ctx_print_local_zones(struct ub_ctx* ctx);
  * @param zone_type: type of the zone (like for unbound.conf) in text.
  * @return 0 if OK, else error.
  */
-int ub_ctx_zone_add(struct ub_ctx* ctx, const char *zone_name, 
-	const char *zone_type);
+	int ub_ctx_zone_add(struct ub_ctx* ctx, const char* zone_name,
+		const char* zone_type);
 
-/**
+	/**
  * Remove zone from local authority info of the library.
  * @param ctx: context.  Is finalized by the routine.
  * @param zone_name: name of the zone in text, "example.com"
  *	If it does not exist, nothing happens.
  * @return 0 if OK, else error.
  */
-int ub_ctx_zone_remove(struct ub_ctx* ctx, const char *zone_name);
+	int ub_ctx_zone_remove(struct ub_ctx* ctx, const char* zone_name);
 
-/**
+	/**
  * Add localdata to the library local authority info.
  * Similar to local-data config statement.
  * @param ctx: context.  Is finalized by the routine.
@@ -585,21 +587,21 @@ int ub_ctx_zone_remove(struct ub_ctx* ctx, const char *zone_name);
  *	"www.example.com IN A 127.0.0.1"
  * @return 0 if OK, else error.
  */
-int ub_ctx_data_add(struct ub_ctx* ctx, const char *data);
+	int ub_ctx_data_add(struct ub_ctx* ctx, const char* data);
 
-/**
+	/**
  * Remove localdata from the library local authority info.
  * @param ctx: context.  Is finalized by the routine.
  * @param data: the name to delete all data from, like "www.example.com".
  * @return 0 if OK, else error.
  */
-int ub_ctx_data_remove(struct ub_ctx* ctx, const char *data);
+	int ub_ctx_data_remove(struct ub_ctx* ctx, const char* data);
 
-/**
+	/**
  * Get a version string from the libunbound implementation.
  * @return a static constant string with the version number.
  */
-const char* ub_version(void);
+	const char* ub_version(void);
 
 #ifdef __cplusplus
 }
