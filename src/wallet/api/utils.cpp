@@ -28,34 +28,36 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-
-
-#include "include_base_utils.h"                     // LOG_PRINT_x
+#include "include_base_utils.h" // LOG_PRINT_x
 #include "common/util.h"
 
 using namespace std;
 
-namespace Monero {
-namespace Utils {
+namespace Monero
+{
+namespace Utils
+{
 
-bool isAddressLocal(const std::string &address)
-{ 
-    try {
-        return tools::is_local_address(address);
-    } catch (const std::exception &e) {
-        MERROR("error: " << e.what());
-        return false;
-    }
+bool isAddressLocal(const std::string& address)
+{
+	try
+	{
+		return tools::is_local_address(address);
+	}
+	catch(const std::exception& e)
+	{
+		MERROR("error: " << e.what());
+		return false;
+	}
 }
 
 void onStartup()
 {
-    tools::on_startup();
+	tools::on_startup();
 }
 
-}
+} // namespace Utils
 
-
-} // namespace
+} // namespace Monero
 
 namespace Bitmonero = Monero;
