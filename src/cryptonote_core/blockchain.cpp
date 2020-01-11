@@ -172,7 +172,9 @@ Blockchain::Blockchain(tx_memory_pool& tx_pool) :
 	m_fast_sync(true),
 	m_show_time_stats(false),
 	m_sync_counter(0),
-	m_cancel(false)
+	m_cancel(false),
+	m_difficulty_for_next_block_top_hash(crypto::null_hash),
+	m_difficulty_for_next_block(1)
 {
 	LOG_PRINT_L3("Blockchain::" << __func__);
 }
@@ -765,7 +767,17 @@ bool Blockchain::get_block_by_hash(const crypto::hash& h, block& blk, bool* orph
 difficulty_type Blockchain::get_difficulty_for_next_block()
 {
 	LOG_PRINT_L3("Blockchain::" << __func__);
-	CRITICAL_REGION_LOCAL(m_blockchain_lock);
+
+	CRITICAL_REGION_LOCAL(m_difficulty_lock);
+	// we can call this without the blockchain lock, it might just give us
+	// something a bit out of date, but that's fine since anything which
+	// requires the blockchain lock will have acquired it in the first place,
+	// and it will be unlocked only when called from the getinfo RPC
+	crypto::hash top_hash = get_tail_id();
+	if(top_hash == m_difficulty_for_next_block_top_hash)
+		return m_difficulty_for_next_block;
+
+	CRITICAL_REGION_LOCAL1(m_blockchain_lock);
 	std::vector<uint64_t> timestamps;
 	std::vector<difficulty_type> difficulties;
 	auto height = m_db->height();
@@ -808,7 +820,10 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
 		m_difficulties = difficulties;
 	}
 	size_t target = get_difficulty_target();
-	return next_difficulty(timestamps, difficulties, target);
+	difficulty_type diff = next_difficulty(timestamps, difficulties, target);
+	m_difficulty_for_next_block_top_hash = top_hash;
+	m_difficulty_for_next_block = diff;
+	return diff;
 }
 //------------------------------------------------------------------
 // This function removes blocks from the blockchain until it gets to the
